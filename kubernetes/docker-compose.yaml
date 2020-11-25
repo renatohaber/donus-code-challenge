@@ -1,0 +1,13 @@
+version: '3'
+services:
+  donus-postgres:
+    image: "postgres"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PORT: "5432"
+      POSTGRES_PASSWORD: "mysecretpassword"
+      POSTGRES_DB: "partner"
+      POSTGRES_USER: "postgres"
+    volumes:
+      - ~/DB/donus/data:/var/lib/postgresql/data:rw

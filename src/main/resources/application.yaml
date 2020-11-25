@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: donus-account-service
+    driver-class-datasetName: org.postgresql.Driver
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 10
+  # Enable multipart uploads
+  servlet:
+    multipart:
+      enabled: false
+
+security:
+  web:
+    public:
+      path: /actuator/health/*,/actuator/health
+
+server:
+  compression.enabled: true
+  shutdown: graceful
+
+management:
+  server:
+    port: 8081
