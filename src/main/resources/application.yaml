@@ -6,16 +6,24 @@ spring:
     open-in-view: false
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
     generate-ddl: true
+    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         jdbc:
           batch_size: 10
+  datasource:
+    password: mysecretpassword
+    url: jdbc:postgresql://localhost:5432/partner
+    username: postgres
   # Enable multipart uploads
   servlet:
     multipart:
       enabled: false
+
+
+
 
 security:
   web:
@@ -29,3 +37,8 @@ server:
 management:
   server:
     port: 8081
+
+logging:
+  level:
+    org.springframework.web: ERROR
+    br.com.donus: INFO

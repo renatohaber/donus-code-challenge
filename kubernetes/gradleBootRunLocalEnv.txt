@@ -1,5 +1,0 @@
-logging.level.root=INFO
-SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/account
-SPRING_DATASOURCE_USERNAME=postgres
-SPRING_DATASOURCE_PASSWORD=mysecretpassword
-spring.jpa.show-sql=true

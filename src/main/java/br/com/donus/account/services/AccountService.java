@@ -101,10 +101,12 @@ public class AccountService {
 
         Account currentAccount = accountRepository.findAccountById(id)
                 .orElseThrow(() -> new AccountNotFoundException(id));
+        BigDecimal bonus = value.multiply(BigDecimal.valueOf(0.005));
+        BigDecimal deposit = value.add(bonus);
+        currentAccount.setBalance(currentAccount.getBalance().add(deposit));
 
-        BigDecimal credit = value.multiply(BigDecimal.valueOf(1.005));
-        currentAccount.setBalance(currentAccount.getBalance().add(credit));
         registerTransaction(currentAccount.getId(), TransactionType.DEPOSIT, value);
+        registerTransaction(currentAccount.getId(), TransactionType.BONUS, bonus);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -112,12 +114,15 @@ public class AccountService {
 
         Account currentAccount = accountRepository.findAccountById(id)
                 .orElseThrow(() -> new AccountNotFoundException(id));
-
         BigDecimal tax = value.multiply(BigDecimal.valueOf(0.01));
         BigDecimal withdraw = value.add(tax);
         if (currentAccount.getBalance().compareTo(withdraw) > 0) {
+
             currentAccount.setBalance(currentAccount.getBalance().subtract(withdraw));
+
             registerTransaction(currentAccount.getId(), TransactionType.WITHDRAW, value);
+            registerTransaction(currentAccount.getId(), TransactionType.TAX, tax);
+
         } else {
             throw new NotEnoughFundsException(withdraw);
         }
@@ -132,15 +137,19 @@ public class AccountService {
                 .orElseThrow(() -> new TargetAccountNotFoundException(target));
 
         if (currentAccount.getBalance().compareTo(value) > 0) {
+
             currentAccount.setBalance(currentAccount.getBalance().subtract(value));
             targetAccount.setBalance(targetAccount.getBalance().add(value));
+
             registerTransaction(currentAccount.getId(), TransactionType.TRANSFER_SEND, value);
             registerTransaction(targetAccount.getId(), TransactionType.TRANSFER_RECEIVED, value);
+
         } else {
             throw new NotEnoughFundsException(value);
         }
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     private void registerTransaction(UUID accountId, TransactionType type, BigDecimal value) {
         Transaction tr = new Transaction();
         tr.setAccountId(accountId);
