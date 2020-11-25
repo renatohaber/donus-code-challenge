@@ -13,6 +13,7 @@ import br.com.donus.account.data.repositories.AccountRepository;
 import br.com.donus.account.data.repositories.TransactionRepository;
 import br.com.donus.account.exception.*;
 import br.com.donus.account.utils.DocumentValidator;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -48,26 +49,30 @@ public class AccountService {
     @Transactional(propagation = Propagation.REQUIRED)
     public AccountResponse createAccount(CreateAccountRequest request) {
 
-        if (!documentValidator.isValidCPF(request.getTaxId())) {
+        String formatted = formatDocument(request.getTaxId());
+        if (!documentValidator.isValidCPF(formatted)) {
             throw new InvalidTaxIdException(request.getTaxId());
         }
 
-        Optional<Account> current = accountRepository.findAccountByTaxId(request.getTaxId());
+        Optional<Account> current = accountRepository.findAccountByTaxId(formatted);
         current.ifPresent(c -> {
             throw new AccountAlreadyExistsException(request.getTaxId());
         });
 
-        Account savedAccount = createInsertAccount(request);
+        Account savedAccount = createInsertAccount(request, formatted);
         return accountMapper.sourceToTarget(savedAccount, SAO_PAULO_TIME_ZONE);
     }
 
-    private Account createInsertAccount(CreateAccountRequest request) {
+    private String formatDocument(String taxId) {
+        String document = taxId.replaceAll("[^\\d]", "");
+        return StringUtils.leftPad(document, 11, "0");
+    }
 
-        String document = request.getTaxId().replaceAll("[^\\d.]", "");
+    private Account createInsertAccount(CreateAccountRequest request, String formatedTaxId) {
 
         AccountRequest accountRequest = AccountRequest.builder()
                 .name(request.getName())
-                .taxId(document)
+                .taxId(formatedTaxId)
                 .balance(BigDecimal.ZERO)
                 .build();
 
@@ -78,7 +83,8 @@ public class AccountService {
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public AccountResponse findByTaxId(String taxid) {
-        return accountMapper.sourceToTarget(accountRepository.findAccountByTaxId(taxid)
+        String formatted = formatDocument(taxid);
+        return accountMapper.sourceToTarget(accountRepository.findAccountByTaxId(formatted)
                 .orElseThrow(() -> new AccountNotFoundException(taxid)), SAO_PAULO_TIME_ZONE);
     }
 
@@ -92,8 +98,7 @@ public class AccountService {
     public PageResponse<AccountResponse> listAll(Pageable pageable) {
         Page<Account> accountPage = accountRepository.findAll(pageable);
 
-        return pageMapper.sourceToTarget(accountPage.map(partner -> accountMapper.sourceToListTarget(partner, SAO_PAULO_TIME_ZONE)));
-
+        return pageMapper.sourceToTarget(accountPage.map(account -> accountMapper.sourceToListTarget(account, SAO_PAULO_TIME_ZONE)));
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
