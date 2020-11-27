@@ -22,7 +22,7 @@ Feature: Make a deposit on a existent account
     Then the system will return 200 status code
     And the service will reply this account: "<response>"
     Examples:
-      | accountId                            | value | taxId       | response                                                                                                                  |
+      | accountId                            | value | taxId       | response                                                                                                                      |
       | cea123bc-0b10-4898-b117-ebd7af844a84 | 1000  | 74496672073 | {\"id\": \"cea123bc-0b10-4898-b117-ebd7af844a84\",\"name\": \"Renato\",\"taxId\": \"74496672073\",\"balance\": 1509.000}      |
       | 1bec7c83-d0b9-46be-aad8-90383c01ac52 | 10000 | 08796938005 | {\"id\": \"1bec7c83-d0b9-46be-aad8-90383c01ac52\",\"name\": \"Sarah Melo\",\"taxId\": \"08796938005\",\"balance\": 10050.000} |
 

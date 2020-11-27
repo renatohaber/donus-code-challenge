@@ -23,9 +23,9 @@ public class EntitySampleFactory {
             return null;
         }
         return currentDate.withDayOfMonth(1)
-                          .withHour(0)
-                          .withMinute(0)
-                          .withSecond(0);
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0);
     }
 
 }

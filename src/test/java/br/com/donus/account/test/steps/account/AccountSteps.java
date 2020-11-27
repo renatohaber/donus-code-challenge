@@ -133,7 +133,7 @@ public class AccountSteps {
     }
 
     @When("this user requests details about the account by the tax id {string}")
-    public void thisUserRequestsDetailsAboutThisAccountByTheTaxId(String taxId)  {
+    public void thisUserRequestsDetailsAboutThisAccountByTheTaxId(String taxId) {
         MockHttpServletRequestBuilder
                 mockHttpServletRequestBuilder =
                 MockMvcRequestBuilders.get("/accounts/taxid/" + taxId)

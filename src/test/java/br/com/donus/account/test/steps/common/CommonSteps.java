@@ -6,7 +6,6 @@ import br.com.donus.account.data.entities.Transaction;
 import br.com.donus.account.data.repositories.AccountRepository;
 import br.com.donus.account.data.repositories.TransactionRepository;
 import br.com.donus.account.test.AccountApplicationTestData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
