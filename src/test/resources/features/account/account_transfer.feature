@@ -35,7 +35,7 @@ Feature: Make a transfers to existent accounts
       | source | cea123bc-0b10-4898-b117-ebd7af844999 |
       | target | 1bec7c83-d0b9-46be-aad8-90383c01ac52 |
       | value  | 500                                  |
-    Then the system will return 500 status code
+    Then an exception is thrown
 
   Scenario: Try to transfer money to account that does not exist
     Given a user as follows:
@@ -45,7 +45,7 @@ Feature: Make a transfers to existent accounts
       | source | 1bec7c83-d0b9-46be-aad8-90383c01ac52 |
       | target | cea123bc-0b10-4898-b117-ebd7af844999 |
       | value  | 500                                  |
-    Then the system will return 500 status code
+    Then an exception is thrown
 
   Scenario: Try to transfer money to account with no enough funds
     Given a user as follows:
@@ -55,7 +55,7 @@ Feature: Make a transfers to existent accounts
       | source | 1bec7c83-d0b9-46be-aad8-90383c01ac52 |
       | target | cea123bc-0b10-4898-b117-ebd7af844999 |
       | value  | 51100                                |
-    Then the system will return 500 status code
+    Then an exception is thrown
 
   Scenario: Try to transfer money with database offline
     Given a user as follows:
@@ -66,7 +66,8 @@ Feature: Make a transfers to existent accounts
       | source | 1bec7c83-d0b9-46be-aad8-90383c01ac52 |
       | target | cea123bc-0b10-4898-b117-ebd7af844999 |
       | value  | 51100                                |
-    Then the system will return 500 status code
+    Then an exception is thrown
+
 
 
 

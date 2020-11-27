@@ -23,6 +23,13 @@ The script ***V1__Create_Initial_Schema.sql*** is included in case we want to us
 
 ## Running the application locally
 
+Having created the database partner, and eventually adjusted the JDBC configuration, you can execute the following commands to start the application:
+```
+1. git clone https://github.com/renatohaber/donus-code-challenge.git
+2. cd donus-code-challenge
+3. gradle clean build
+4. gradle run
+```
 
 ## CRUD Endpoints
 Please note that I am usinng curl to perform my local tests and write this documentation, but the tests could be executed in a browser, postman, insonia, and so on.

@@ -18,6 +18,9 @@ public class AccountApplicationTestData {
     private ResultActions resultActions;
     private LocalDateTime now;
 
+    // we should have an Exception Handler in place
+    private Exception exception;
+
     public AccountApplicationTestData() {
         this.reset();
     }
@@ -27,6 +30,7 @@ public class AccountApplicationTestData {
         this.logon = null;
         this.resultActions = null;
         this.now = null;
+        this.exception = null;
     }
 
     public LocalDateTime getFirstDayOfMonth() {

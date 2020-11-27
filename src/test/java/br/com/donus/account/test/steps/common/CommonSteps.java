@@ -79,14 +79,16 @@ public class CommonSteps {
 
     @Then("the system will return {int} status code")
     public void theSystemWillReturnStatusCode(int status) throws Exception {
-        this.testData.getResultActions()
-                .andExpect(status().is(status));
+        if (testData.getException() != null) {
+            this.testData.getResultActions()
+                    .andExpect(status().is(status));
 
-        if (status == HttpStatus.NO_CONTENT.value()) {
-            Assert.assertTrue(StringUtils.isBlank(this.testData.getResultActions()
-                    .andReturn()
-                    .getResponse()
-                    .getContentAsString()));
+            if (status == HttpStatus.NO_CONTENT.value()) {
+                Assert.assertTrue(StringUtils.isBlank(this.testData.getResultActions()
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString()));
+            }
         }
     }
 
@@ -119,5 +121,10 @@ public class CommonSteps {
         given(this.transactionRepository.findByAccountIdAndCreationDateBetweenOrderByCreationDateDesc(any(UUID.class), any(), any()))
                 .willThrow(RuntimeException.class);
 
+    }
+
+    @Then("an exception is thrown")
+    public void anExceptionIsThrown() {
+        Assert.assertNotNull(this.testData.getException());
     }
 }

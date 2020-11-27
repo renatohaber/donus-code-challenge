@@ -95,20 +95,25 @@ public class AccountSteps {
     }
 
     @When("this user requests details about the account {string}")
-    public void thisUserRequestsDetailsAboutThisAccount(String accountId) throws Exception {
+    public void thisUserRequestsDetailsAboutThisAccount(String accountId) {
         MockHttpServletRequestBuilder
                 mockHttpServletRequestBuilder =
                 MockMvcRequestBuilders.get("/accounts/id/" + accountId)
                         .with(csrf())
                         .accept(MediaType.APPLICATION_JSON);
 
-        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        ResultActions resultActions = null;
+        try {
+            resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        } catch (Exception e) {
+            this.testData.setException(e);
+        }
 
         this.testData.setResultActions(resultActions);
     }
 
     @When("this user requests details for all the accounts:")
-    public void thisUserRequestsDetailsForAllTheAccounts(Map<String, String> parameters) throws Exception {
+    public void thisUserRequestsDetailsForAllTheAccounts(Map<String, String> parameters) {
         MockHttpServletRequestBuilder
                 mockHttpServletRequestBuilder =
                 MockMvcRequestBuilders.get("/accounts/")
@@ -117,20 +122,30 @@ public class AccountSteps {
 
         parameters.forEach(mockHttpServletRequestBuilder::queryParam);
 
-        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        ResultActions resultActions = null;
+        try {
+            resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        } catch (Exception e) {
+            this.testData.setException(e);
+        }
 
         this.testData.setResultActions(resultActions);
     }
 
     @When("this user requests details about the account by the tax id {string}")
-    public void thisUserRequestsDetailsAboutThisAccountByTheTaxId(String taxId) throws Exception {
+    public void thisUserRequestsDetailsAboutThisAccountByTheTaxId(String taxId)  {
         MockHttpServletRequestBuilder
                 mockHttpServletRequestBuilder =
                 MockMvcRequestBuilders.get("/accounts/taxid/" + taxId)
                         .with(csrf())
                         .accept(MediaType.APPLICATION_JSON);
 
-        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        ResultActions resultActions = null;
+        try {
+            resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        } catch (Exception e) {
+            this.testData.setException(e);
+        }
 
         this.testData.setResultActions(resultActions);
     }
@@ -165,7 +180,7 @@ public class AccountSteps {
     }
 
     @When("this user request to insert the account:")
-    public void thisUserRequestToInsertTheAccount(Map<String, String> accountRequestMap) throws Exception {
+    public void thisUserRequestToInsertTheAccount(Map<String, String> accountRequestMap) {
 
         CreateAccountRequest createAccountRequest = null;
         try {
@@ -176,21 +191,26 @@ public class AccountSteps {
         } catch (Exception ignored) {
         }
 
-        MockHttpServletRequestBuilder
-                mockHttpServletRequestBuilder =
-                MockMvcRequestBuilders.post("/accounts/")
-                        .with(csrf())
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(createAccountRequest));
 
-        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        ResultActions resultActions = null;
+        try {
+            MockHttpServletRequestBuilder
+                    mockHttpServletRequestBuilder =
+                    MockMvcRequestBuilders.post("/accounts/")
+                            .with(csrf())
+                            .accept(MediaType.APPLICATION_JSON_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .content(objectMapper.writeValueAsString(createAccountRequest));
+            resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        } catch (Exception e) {
+            this.testData.setException(e);
+        }
 
         this.testData.setResultActions(resultActions);
     }
 
     @When("this user request to deposits to the account:")
-    public void thisUserRequestToDepositsToTheAccount(Map<String, String> parameters) throws Exception {
+    public void thisUserRequestToDepositsToTheAccount(Map<String, String> parameters) {
 
         String target = parameters.get("accountId");
         String value = parameters.get("value");
@@ -201,13 +221,18 @@ public class AccountSteps {
                         .with(csrf())
                         .accept(MediaType.APPLICATION_JSON);
 
-        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        ResultActions resultActions = null;
+        try {
+            resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        } catch (Exception e) {
+            this.testData.setException(e);
+        }
 
         this.testData.setResultActions(resultActions);
     }
 
     @When("this user request a withdraw from the account:")
-    public void thisUserRequestAWithdrawFromTheAccount(Map<String, String> parameters) throws Exception {
+    public void thisUserRequestAWithdrawFromTheAccount(Map<String, String> parameters) {
 
         String target = parameters.get("accountId");
         String value = parameters.get("value");
@@ -218,13 +243,18 @@ public class AccountSteps {
                         .with(csrf())
                         .accept(MediaType.APPLICATION_JSON);
 
-        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        ResultActions resultActions = null;
+        try {
+            resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        } catch (Exception e) {
+            this.testData.setException(e);
+        }
 
         this.testData.setResultActions(resultActions);
     }
 
     @When("this user request transfer from the account:")
-    public void thisUserRequestTransferFromTheAccount(Map<String, String> parameters) throws Exception {
+    public void thisUserRequestTransferFromTheAccount(Map<String, String> parameters) {
 
         String source = parameters.get("source");
         String target = parameters.get("target");
@@ -237,7 +267,12 @@ public class AccountSteps {
                         .with(csrf())
                         .accept(MediaType.APPLICATION_JSON);
 
-        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        ResultActions resultActions = null;
+        try {
+            resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+        } catch (Exception e) {
+            this.testData.setException(e);
+        }
 
         this.testData.setResultActions(resultActions);
     }

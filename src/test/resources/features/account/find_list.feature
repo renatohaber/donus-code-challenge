@@ -1,7 +1,7 @@
 # language: en
 @account
-Feature: Find accounts by id and tax id
-  Users want to retrieve accounts by id and tax id
+Feature: Retrieve all accounts stored on the database
+  Users want to retrieve all the accounts stored on the database
 
   Background:
     Given database contains accounts as:
@@ -33,4 +33,4 @@ Feature: Find accounts by id and tax id
     When this user requests details for all the accounts:
       | page | 1  |
       | size | 20 |
-    Then the system will return 500 status code
+    Then an exception is thrown

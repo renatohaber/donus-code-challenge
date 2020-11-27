@@ -32,7 +32,7 @@ Feature: Create a new account
     When this user request to insert the account:
       | name  | Sarah Melo  |
       | taxId | 30878308016 |
-    Then the system will return 500 status code
+    Then an exception is thrown
 
   Scenario: Try to create a new account for a invalid tax id
     Given a user as follows:
@@ -44,17 +44,5 @@ Feature: Create a new account
     When this user request to insert the account:
       | name  | Sarah Melo  |
       | taxId | 12345678901 |
-    Then the system will return 500 status code
+    Then an exception is thrown
 
-  Scenario: Try to create a new account when the database is offline
-    Given a user as follows:
-      | logon | ABC1234             |
-      | email | email@siannodel.com |
-    And the next account insertion data is:
-      | nextId | 1bec7c83-d0b9-46be-aad8-90383c01ac52 |
-      | now    | 12/12/2020 - 12:25:21 UTC            |
-    And the database is offline
-    When this user request to insert the account:
-      | name  | Paulo Henrique Mota |
-      | taxId | 758.231.760-23      |
-    Then the system will return 500 status code

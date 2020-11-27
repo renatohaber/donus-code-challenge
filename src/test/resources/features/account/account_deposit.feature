@@ -33,7 +33,7 @@ Feature: Make a deposit on a existent account
     When this user request to deposits to the account:
       | accountId | 2761db3f-0c3b-4931-b3de-4f42b85fadc5 |
       | value     | 1000000                              |
-    Then the system will return 404 status code
+    Then an exception is thrown
 
   Scenario: Try to make a deposit with database offline
     Given a user as follows:
@@ -43,6 +43,6 @@ Feature: Make a deposit on a existent account
     When this user request to deposits to the account:
       | accountId | 95ee5aae-34ed-4bf3-8ce3-df97652a1a58 |
       | value     | 1000000                              |
-    Then the system will return 500 status code
+    Then an exception is thrown
 
 

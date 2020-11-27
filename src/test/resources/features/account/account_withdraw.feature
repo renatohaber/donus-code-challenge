@@ -33,7 +33,7 @@ Feature: Make a withdraw on a existent account
     When this user request a withdraw from the account:
       | accountId | 2761db3f-0c3b-4931-b3de-4f42b85fadc5 |
       | value     | 1000000                              |
-    Then the system will return 404 status code
+    Then an exception is thrown
 
   Scenario Outline: Try to make a withdraw in an account that does not have enough funds
     Given a user as follows:
@@ -42,7 +42,7 @@ Feature: Make a withdraw on a existent account
     When this user request a withdraw from the account:
       | accountId | cea123bc-0b10-4898-b117-ebd7af844a84 |
       | value     | <value>                              |
-    Then the system will return 500 status code
+    Then an exception is thrown
     Examples:
       | value |
       # not enough for the tax
@@ -58,4 +58,4 @@ Feature: Make a withdraw on a existent account
     When this user request a withdraw from the account:
       | accountId | cea123bc-0b10-4898-b117-ebd7af844a84 |
       | value     | 1000000                              |
-    Then the system will return 500 status code
+    Then an exception is thrown
