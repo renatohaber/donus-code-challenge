@@ -16,6 +16,7 @@ import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -37,15 +39,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CommonSteps {
 
     private final AccountApplicationTestData testData;
-    private final ObjectMapper objectMapper;
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
 
     @Autowired
-    public CommonSteps(AccountApplicationTestData testData, ObjectMapper objectMapper, Jackson2ObjectMapperBuilder objectMapperBuilder,
+    public CommonSteps(AccountApplicationTestData testData, Jackson2ObjectMapperBuilder objectMapperBuilder,
                        AccountRepository accountRepository, TransactionRepository transactionRepository) {
         this.testData = testData;
-        this.objectMapper = objectMapperBuilder.build();
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
     }
@@ -57,6 +57,8 @@ public class CommonSteps {
 
     @After
     public void wrapUp() {
+        reset(accountRepository);
+        reset(transactionRepository);
     }
 
     @Given("a user as follows:")
@@ -101,6 +103,9 @@ public class CommonSteps {
 
         given(this.accountRepository.findAccountByTaxId(anyString()))
                 .willThrow(RuntimeException.class);
+
+        given(this.accountRepository.findAll(any(Pageable.class)))
+                .willThrow(RuntimeException.class);
     }
 
     private void setTransactionRepositoryOffline() {
@@ -114,7 +119,5 @@ public class CommonSteps {
         given(this.transactionRepository.findByAccountIdAndCreationDateBetweenOrderByCreationDateDesc(any(UUID.class), any(), any()))
                 .willThrow(RuntimeException.class);
 
-        given(this.accountRepository.findAccountByTaxId(anyString()))
-                .willThrow(RuntimeException.class);
     }
 }

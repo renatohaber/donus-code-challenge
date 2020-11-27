@@ -1,9 +1,12 @@
 package br.com.donus.account.test.steps.account;
 
 import br.com.donus.account.data.dto.account.AccountResponse;
+import br.com.donus.account.data.dto.account.CreateAccountRequest;
+import br.com.donus.account.data.dto.common.PageResponse;
 import br.com.donus.account.data.entities.Account;
 import br.com.donus.account.data.repositories.AccountRepository;
 import br.com.donus.account.test.AccountApplicationTestData;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -12,6 +15,10 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -20,14 +27,11 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.reset;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 public class AccountSteps {
@@ -59,8 +63,35 @@ public class AccountSteps {
     public void databaseContainsColumnsAs(List<Account> accounts) {
         given(this.accountRepository.findAccountById(any(UUID.class))).willReturn(Optional.empty());
         given(this.accountRepository.findAccountByTaxId(anyString())).willReturn(Optional.empty());
+        given(this.accountRepository.findAll(any(Pageable.class)))
+                .willAnswer((Answer<Page<Account>>) invocation -> Page.empty(invocation.getArgument(1)));
         accounts.forEach(account -> given(this.accountRepository.findAccountById(eq(account.getId()))).willReturn(Optional.of(account)));
         accounts.forEach(account -> given(this.accountRepository.findAccountByTaxId(eq(account.getTaxId()))).willReturn(Optional.of(account)));
+
+        Answer<Page<Account>> findAllAnswer = invocation -> {
+            List<Account> selectedColumns = new ArrayList<>(accounts);
+
+            return new PageImpl<>(selectedColumns, invocation.getArgument(0), 0);
+        };
+        given(this.accountRepository.findAll(any(Pageable.class))).will(findAllAnswer);
+    }
+
+    @Given("the next account insertion data is:")
+    public void theNextAccountInsertionDataIs(Map<String, String> accountInsertionData) {
+        final LocalDateTime now = LocalDateTime.parse(accountInsertionData.get("now"), DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss z"));
+        this.testData.setNow(now);
+        when(this.accountRepository.save(any()))
+                .thenAnswer(invocation -> {
+                    final Account account = invocation.getArgument(0);
+
+                    account.setId(UUID.fromString(accountInsertionData.get("nextId")));
+
+                    account.setCreationDate(now);
+                    account.setLastUpdate(now);
+
+                    return account;
+                });
+
     }
 
     @When("this user requests details about the account {string}")
@@ -105,7 +136,7 @@ public class AccountSteps {
     }
 
     @Then("the service will reply this account: {string}")
-    public void theServiceWillReplyThisAcount(String json) throws IOException {
+    public void theServiceWillReplyThisAccount(String json) throws IOException {
         AccountResponse expectedResponse = objectMapper.readValue(json, AccountResponse.class);
 
         MvcResult mvcResult = this.testData.getResultActions()
@@ -115,5 +146,99 @@ public class AccountSteps {
                         .getContentAsString(), AccountResponse.class);
 
         Assert.assertEquals(expectedResponse, response);
+    }
+
+    @Then("the service will reply this list of accounts: {string}")
+    public void theServiceWillReplyThisListOfAccounts(String expectedJson) throws IOException {
+        final TypeReference<PageResponse<AccountResponse>> pageOfAccounts = new TypeReference<>() {
+        };
+        PageResponse<AccountResponse> expectedResponse = objectMapper.readValue(expectedJson, pageOfAccounts);
+
+        MvcResult mvcResult = this.testData.getResultActions()
+                .andReturn();
+        final String json = mvcResult.getResponse()
+                .getContentAsString();
+
+        PageResponse<AccountResponse> response = objectMapper.readValue(json, pageOfAccounts);
+
+        Assert.assertEquals(expectedResponse, response);
+    }
+
+    @When("this user request to insert the account:")
+    public void thisUserRequestToInsertTheAccount(Map<String, String> accountRequestMap) throws Exception {
+
+        CreateAccountRequest createAccountRequest = null;
+        try {
+            createAccountRequest = CreateAccountRequest.builder()
+                    .name(accountRequestMap.get("name"))
+                    .taxId(accountRequestMap.get("taxId"))
+                    .build();
+        } catch (Exception ignored) {
+        }
+
+        MockHttpServletRequestBuilder
+                mockHttpServletRequestBuilder =
+                MockMvcRequestBuilders.post("/accounts/")
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(createAccountRequest));
+
+        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+
+        this.testData.setResultActions(resultActions);
+    }
+
+    @When("this user request to deposits to the account:")
+    public void thisUserRequestToDepositsToTheAccount(Map<String, String> parameters) throws Exception {
+
+        String target = parameters.get("accountId");
+        String value = parameters.get("value");
+
+        MockHttpServletRequestBuilder
+                mockHttpServletRequestBuilder =
+                MockMvcRequestBuilders.put("/accounts/" + target + "/deposit/" + value)
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON);
+
+        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+
+        this.testData.setResultActions(resultActions);
+    }
+
+    @When("this user request a withdraw from the account:")
+    public void thisUserRequestAWithdrawFromTheAccount(Map<String, String> parameters) throws Exception {
+
+        String target = parameters.get("accountId");
+        String value = parameters.get("value");
+
+        MockHttpServletRequestBuilder
+                mockHttpServletRequestBuilder =
+                MockMvcRequestBuilders.put("/accounts/" + target + "/withdraw/" + value)
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON);
+
+        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+
+        this.testData.setResultActions(resultActions);
+    }
+
+    @When("this user request transfer from the account:")
+    public void thisUserRequestTransferFromTheAccount(Map<String, String> parameters) throws Exception {
+
+        String source = parameters.get("source");
+        String target = parameters.get("target");
+        String value = parameters.get("value");
+
+        MockHttpServletRequestBuilder
+                mockHttpServletRequestBuilder =
+                MockMvcRequestBuilders.put("/accounts/" + source + "/transfer/"
+                        + target + "/" + value)
+                        .with(csrf())
+                        .accept(MediaType.APPLICATION_JSON);
+
+        ResultActions resultActions = mockMvc.perform(mockHttpServletRequestBuilder);
+
+        this.testData.setResultActions(resultActions);
     }
 }

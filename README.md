@@ -23,7 +23,6 @@ The script ***V1__Create_Initial_Schema.sql*** is included in case we want to us
 
 ## Running the application locally
 
-## Running the application tests
 
 ## CRUD Endpoints
 Please note that I am usinng curl to perform my local tests and write this documentation, but the tests could be executed in a browser, postman, insonia, and so on.
