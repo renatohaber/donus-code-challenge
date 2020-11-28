@@ -4,14 +4,12 @@ import java.util.UUID;
 
 public class AccountNotFoundException extends EntityNotFoundException {
 
-    private static final String MESSAGE_TEMPLATE = "Account not found for the document: %s";
-
     public AccountNotFoundException(UUID AccountId) {
-        super(String.format(MESSAGE_TEMPLATE, AccountId));
+        super(String.format("Account not found for the id: %s", AccountId));
     }
 
     public AccountNotFoundException(String document) {
-        super(String.format(MESSAGE_TEMPLATE, document));
+        super(String.format("Account not found for the document: %s", document));
     }
 
 }

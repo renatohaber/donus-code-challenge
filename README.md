@@ -31,10 +31,19 @@ Having created the database partner, and eventually adjusted the JDBC configurat
 4. gradle run
 ```
 
+## Running the tests on the command line
+
+To execute the test scenarios on the command line, execute the following command:
+```
+1. gradle clean test
+```
+
 ## CRUD Endpoints
 Please note that I am usinng curl to perform my local tests and write this documentation, but the tests could be executed in a browser, postman, insonia, and so on.
 
  1. Create account
+ 
+ **[POST] http://localhost:8080/accounts**
  To create a new account, you need to perform a call like this:
 ```
 curl --header "Content-Type: application/json" --request POST --data '{"name":"Renato","taxId":"744.966.720-73"}' http://localhost:8080/accounts
@@ -63,7 +72,8 @@ Error message: Account already exists for the tax id: 744.966.720-73
 
  2. Retrieve account by tax id
 
- To retrieve an account by tax id, you need to perform a call like this:
+**[GET] http://localhost:8080/accounts/taxid/{taxid}**
+To retrieve an account by tax id, you need to perform a call like this:
 ```
 curl --request GET http://localhost:8080/accounts/taxid/74496672073
 ```
@@ -80,6 +90,8 @@ Error Message: Account not found for the tax id...
  
 
  3. Retrieve account by id
+ 
+**[GET] http://localhost:8080/accounts/id/{id}**
  To retrieve an account by id, you need to perform a call like this:
 ```
 curl --request GET http://localhost:8080/accounts/id/aa8aed5b-f2b2-407f-807a-e89eea558922
@@ -88,6 +100,7 @@ You are going to receive a JSON similar to the example on the item 1, and we als
 
  4. List all accounts
 
+**[GET] http://localhost:8080/accounts**
 To retrieve all accounts stored on the database, you need to execute a call similar the one bellow.
 ```
 curl --request GET http://localhost:8080/accounts
@@ -116,6 +129,8 @@ Please note that for this endpoint, we are using ***Pageable*** to accomodate a 
 ## Deposit
 
 When a deposit occurs, the following call, for example, need to be executed.
+
+**[PUT] http://localhost:8080/accounts/{id}/deposit/{value}**
 ```
 curl --request PUT http://localhost:8080/accounts/cea123bc-0b10-4898-b117-ebd7af844a84/deposit/1000
 ```
@@ -147,6 +162,8 @@ Please note that an error message is thrown if the account to be credited does n
 ## Withdraw
 
 When a withdraw occurs, the following call, for example, need to be executed.
+
+**[PUT] http://localhost:8080/accounts/{id}/withdraw/{value}**
 ```
 curl --request PUT http://localhost:8080/accounts/cea123bc-0b10-4898-b117-ebd7af844a84/withdraw/100
 ```
@@ -178,6 +195,8 @@ Morover, we cannot retrive the total amount of (or more than) the balance; we ma
 ## Transfer
 
 To transfer money between accounts, we need to perform the following call for example.
+
+**[PUT] http://localhost:8080/accounts/{id}/transfer/{target}/{value}}**
 ```
 curl --request PUT http://localhost:8080/accounts/cea123bc-0b10-4898-b117-ebd7af844a84/transfer/95ee5aae-34ed-4bf3-8ce3-df97652a1a58/400
 ```
@@ -215,10 +234,12 @@ On the transaction table, we have 2 new entries for this movimentation.
 
 Please note that an error message is thrown if the source or the target accounts do not exist, similar to the find endpoints above.
 
-Morover, we cannot transfer more than we have on the balance of the source account. When this occurs a Not Enough Funds Exception is thrown.
+Moreover, we cannot transfer more than we have on the balance of the source account. When this occurs a Not Enough Funds Exception is thrown.
 
 ## Transactions
 To retrieve the transactions for a given account, we need to execute the following call:
+
+**[GET] http://localhost:8080/transactions/{accountId}**
 ```
 curl --request GET "http://localhost:8080/transactions/cea123bc-0b10-4898-b117-ebd7af844a84?startDate=2020-10-31&endDate=2020-11-28"
 ```

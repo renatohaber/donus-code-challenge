@@ -60,7 +60,7 @@ public class AccountSteps {
     }
 
     @Given("database contains accounts as:")
-    public void databaseContainsColumnsAs(List<Account> accounts) {
+    public void databaseContainsAccountsAs(List<Account> accounts) {
         given(this.accountRepository.findAccountById(any(UUID.class))).willReturn(Optional.empty());
         given(this.accountRepository.findAccountByTaxId(anyString())).willReturn(Optional.empty());
         given(this.accountRepository.findAll(any(Pageable.class)))
@@ -69,9 +69,9 @@ public class AccountSteps {
         accounts.forEach(account -> given(this.accountRepository.findAccountByTaxId(eq(account.getTaxId()))).willReturn(Optional.of(account)));
 
         Answer<Page<Account>> findAllAnswer = invocation -> {
-            List<Account> selectedColumns = new ArrayList<>(accounts);
+            List<Account> selectedAccounts = new ArrayList<>(accounts);
 
-            return new PageImpl<>(selectedColumns, invocation.getArgument(0), 0);
+            return new PageImpl<>(selectedAccounts, invocation.getArgument(0), 0);
         };
         given(this.accountRepository.findAll(any(Pageable.class))).will(findAllAnswer);
     }

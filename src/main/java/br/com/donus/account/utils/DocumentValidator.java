@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class DocumentValidator {
 
     // https://www.vivaolinux.com.br/script/Codigo-para-validar-CPF-e-CNPJ-otimizado
-    // By Carlos Caldas
+    // By @CarlosCaldas
 
     private static final int[] pesoCPF = {11, 10, 9, 8, 7, 6, 5, 4, 3, 2};
     private static final int[] pesoCNPJ = {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};

@@ -30,8 +30,6 @@ public class AccountService {
 
     private static final TimeZone SAO_PAULO_TIME_ZONE = TimeZone.getTimeZone("America/Sao_Paulo");
 
-    private static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
-
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final DocumentValidator documentValidator;

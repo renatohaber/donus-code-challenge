@@ -3,7 +3,6 @@ package br.com.donus.account.test.config.transformer;
 import br.com.donus.account.test.steps.common.EntitySampleFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.TableEntryTransformer;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -36,7 +35,4 @@ public abstract class EnitityTableTransformer<T> implements TableEntryTransforme
         return this.objectMapper.readValue(this.objectMapper.writeValueAsString(entry), (Class<T>) this.type);
     }
 
-    protected boolean isFilledVariable(String variableValue) {
-        return StringUtils.isNotBlank(variableValue) && !StringUtils.equalsIgnoreCase("null", variableValue);
-    }
 }

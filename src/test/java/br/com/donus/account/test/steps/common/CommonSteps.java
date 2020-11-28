@@ -17,7 +17,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -42,8 +41,7 @@ public class CommonSteps {
     private final TransactionRepository transactionRepository;
 
     @Autowired
-    public CommonSteps(AccountApplicationTestData testData, Jackson2ObjectMapperBuilder objectMapperBuilder,
-                       AccountRepository accountRepository, TransactionRepository transactionRepository) {
+    public CommonSteps(AccountApplicationTestData testData, AccountRepository accountRepository, TransactionRepository transactionRepository) {
         this.testData = testData;
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
@@ -119,7 +117,6 @@ public class CommonSteps {
 
         given(this.transactionRepository.findByAccountIdAndCreationDateBetweenOrderByCreationDateDesc(any(UUID.class), any(), any()))
                 .willThrow(RuntimeException.class);
-
     }
 
     @Then("an exception is thrown")
