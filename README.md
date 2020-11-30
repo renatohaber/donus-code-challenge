@@ -26,9 +26,11 @@ The script ***V1__Create_Initial_Schema.sql*** is included in case we want to us
 Having created the database partner, and eventually adjusted the JDBC configuration, you can execute the following commands to start the application:
 ```
 1. git clone https://github.com/renatohaber/donus-code-challenge.git
-2. cd donus-code-challenge
-3. gradle clean build
-4. gradle run
+2. cd donus-code-challenge/kubernetes
+3. docker-compose up -d
+4. cd ..
+5. gradle clean build
+6. gradle run
 ```
 
 ## Running the tests on the command line
@@ -196,7 +198,7 @@ Morover, we cannot retrive the total amount of (or more than) the balance; we ma
 
 To transfer money between accounts, we need to perform the following call for example.
 
-**[PUT] http://localhost:8080/accounts/{id}/transfer/{target}/{value}}**
+**[PUT] http://localhost:8080/accounts/{id}/transfer/{target}/{value}**
 ```
 curl --request PUT http://localhost:8080/accounts/cea123bc-0b10-4898-b117-ebd7af844a84/transfer/95ee5aae-34ed-4bf3-8ce3-df97652a1a58/400
 ```

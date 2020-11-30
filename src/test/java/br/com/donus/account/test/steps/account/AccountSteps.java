@@ -14,7 +14,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
-import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -50,7 +49,6 @@ public class AccountSteps {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         this.testData.reset();
     }
 

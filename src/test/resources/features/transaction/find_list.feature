@@ -13,7 +13,7 @@ Feature: Retrieve all transactions stored on the database
       | c8543178-67ad-42f5-971e-26f72397a0c4 | cea123bc-0b10-4898-b117-ebd7af844a84 | 400    | 2020-11-17T18:52:26 | TRANSFER_SEND     |
       | d8c76f3f-f6ec-498f-a321-2ff17e10b386 | 95ee5aae-34ed-4bf3-8ce3-df97652a1a58 | 400    | 2020-11-17T18:52:26 | TRANSFER_RECEIVED |
 
-  Scenario Outline: Retrieve all accounts successfully
+  Scenario Outline: Retrieve all transactions successfully
     Given a user as follows:
       | logon | <logon> |
       | email | <email> |

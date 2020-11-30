@@ -4,11 +4,13 @@ import br.com.donus.account.data.dto.account.AccountResponse;
 import br.com.donus.account.data.dto.account.CreateAccountRequest;
 import br.com.donus.account.data.dto.common.PageResponse;
 import br.com.donus.account.services.AccountService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,6 +18,8 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @RestController
+@Validated
+@Log4j2
 public class AccountController {
 
     private final AccountService accountService;
@@ -40,6 +44,7 @@ public class AccountController {
     @GetMapping(value = "/accounts/id/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public AccountResponse getById(@PathVariable(value = "id") UUID id) {
+
         return accountService.findAccountById(id);
     }
 

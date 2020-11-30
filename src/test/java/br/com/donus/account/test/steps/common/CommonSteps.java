@@ -27,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -54,8 +53,6 @@ public class CommonSteps {
 
     @After
     public void wrapUp() {
-        reset(accountRepository);
-        reset(transactionRepository);
     }
 
     @Given("a user as follows:")
@@ -122,5 +119,10 @@ public class CommonSteps {
     @Then("an exception is thrown")
     public void anExceptionIsThrown() {
         Assert.assertNotNull(this.testData.getException());
+    }
+
+    @Then("no exception is thrown")
+    public void noExceptionIsThrown() {
+        Assert.assertNull(this.testData.getException());
     }
 }

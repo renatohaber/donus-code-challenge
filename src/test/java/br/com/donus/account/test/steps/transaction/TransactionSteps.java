@@ -1,11 +1,9 @@
 package br.com.donus.account.test.steps.transaction;
 
 import br.com.donus.account.data.dto.transaction.TransactionResponse;
-import br.com.donus.account.data.entities.Account;
 import br.com.donus.account.data.entities.Transaction;
 import br.com.donus.account.data.repositories.TransactionRepository;
 import br.com.donus.account.test.AccountApplicationTestData;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
@@ -14,7 +12,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
-import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,7 +32,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 public class TransactionSteps {
@@ -54,7 +50,6 @@ public class TransactionSteps {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         this.testData.reset();
     }
 
@@ -70,7 +65,7 @@ public class TransactionSteps {
 
         transactions.stream()
                 .collect(Collectors.groupingBy(Transaction::getAccountId))
-                .forEach((account, proprietaryTransactions) -> given(this.transactionRepository.findByAccountIdAndCreationDateBetweenOrderByCreationDateDesc(eq(account), any(),any()))
+                .forEach((account, proprietaryTransactions) -> given(this.transactionRepository.findByAccountIdAndCreationDateBetweenOrderByCreationDateDesc(eq(account), any(), any()))
                         .willAnswer(
                                 (Answer<Stream<Transaction>>) invocation -> proprietaryTransactions.stream()));
     }
@@ -82,7 +77,7 @@ public class TransactionSteps {
     }
 
     @When("this user requests the transactions for the account {string}:")
-    public void thisUserRequestsTheTransactionsForTheAccount(String accountId,Map<String, String> parameters) {
+    public void thisUserRequestsTheTransactionsForTheAccount(String accountId, Map<String, String> parameters) {
 
         MockHttpServletRequestBuilder
                 mockHttpServletRequestBuilder =

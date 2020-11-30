@@ -46,3 +46,24 @@ Feature: Create a new account
       | taxId | 12345678901 |
     Then an exception is thrown
 
+  Scenario Outline: Trye to create a new account with bad request
+    Given a user as follows:
+      | logon | ABC1234             |
+      | email | email@siannodel.com |
+    And the next account insertion data is:
+      | nextId | <accountId>               |
+      | now    | 12/12/2020 - 12:25:21 UTC |
+    When this user request to insert the account:
+      | name  | <name>  |
+      | taxId | <taxId> |
+    Then no exception is thrown
+    # 404 >> missing a exception handler
+    When this user requests details about the account "<accountId>"
+    # the account does not exist, was not created
+    Then an exception is thrown
+    Examples:
+      | name       | taxId          | accountId                            |
+      | Sarah Melo |                | 1bec7c83-d0b9-46be-aad8-90383c01ac52 |
+      |            | 087.969.380-05 | 1bec7c83-d0b9-46be-aad8-90383c01ac52 |
+      |            |                | 1bec7c83-d0b9-46be-aad8-90383c01ac52 |
+
