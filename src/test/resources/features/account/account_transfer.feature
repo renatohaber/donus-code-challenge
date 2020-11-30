@@ -47,6 +47,16 @@ Feature: Make a transfers to existent accounts
       | value  | 500                                  |
     Then an exception is thrown
 
+  Scenario: Try to transfer money to account with a negative value
+    Given a user as follows:
+      | logon | ABC1234             |
+      | email | email@siannodel.com |
+    When this user request transfer from the account:
+      | source | cea123bc-0b10-4898-b117-ebd7af844999 |
+      | target | 1bec7c83-d0b9-46be-aad8-90383c01ac52 |
+      | value  | -1000                                |
+    Then an exception is thrown
+
   Scenario: Try to transfer money to account with no enough funds
     Given a user as follows:
       | logon | ABC1234             |

@@ -102,8 +102,12 @@ public class AccountService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void deposit(UUID id, BigDecimal value) {
 
+        if (value.compareTo(BigDecimal.ZERO)<0) {
+            throw new NegativeValueException(value);
+        }
         Account currentAccount = accountRepository.findAccountById(id)
                 .orElseThrow(() -> new AccountNotFoundException(id));
+
         BigDecimal bonus = value.multiply(BigDecimal.valueOf(0.005));
         BigDecimal deposit = value.add(bonus);
         currentAccount.setBalance(currentAccount.getBalance().add(deposit));
@@ -115,6 +119,9 @@ public class AccountService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void withdraw(UUID id, BigDecimal value) {
 
+        if (value.compareTo(BigDecimal.ZERO)<0) {
+            throw new NegativeValueException(value);
+        }
         Account currentAccount = accountRepository.findAccountById(id)
                 .orElseThrow(() -> new AccountNotFoundException(id));
         BigDecimal tax = value.multiply(BigDecimal.valueOf(0.01));
@@ -134,6 +141,9 @@ public class AccountService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void transfer(UUID id, UUID target, BigDecimal value) {
 
+        if (value.compareTo(BigDecimal.ZERO)<0) {
+            throw new NegativeValueException(value);
+        }
         Account currentAccount = accountRepository.findAccountById(id)
                 .orElseThrow(() -> new AccountNotFoundException(id));
         Account targetAccount = accountRepository.findAccountById(target)

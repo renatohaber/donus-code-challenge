@@ -35,6 +35,15 @@ Feature: Make a withdraw on a existent account
       | value     | 1000000                              |
     Then an exception is thrown
 
+  Scenario: Try to make a withdraw in an account with negative value
+    Given a user as follows:
+      | logon | ABC1234             |
+      | email | email@siannodel.com |
+    When this user request a withdraw from the account:
+      | accountId | cea123bc-0b10-4898-b117-ebd7af844a8 |
+      | value     | -1000                               |
+    Then an exception is thrown
+
   Scenario Outline: Try to make a withdraw in an account that does not have enough funds
     Given a user as follows:
       | logon | ABC1234             |

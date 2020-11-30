@@ -35,6 +35,15 @@ Feature: Make a deposit on a existent account
       | value     | 1000000                              |
     Then an exception is thrown
 
+  Scenario: Try to make a deposit in an account with a negative value
+    Given a user as follows:
+      | logon | ABC1234             |
+      | email | email@siannodel.com |
+    When this user request to deposits to the account:
+      | accountId | cea123bc-0b10-4898-b117-ebd7af844a84 |
+      | value     | -1000                              |
+    Then an exception is thrown
+
   Scenario: Try to make a deposit with database offline
     Given a user as follows:
       | logon | ABC1234             |
