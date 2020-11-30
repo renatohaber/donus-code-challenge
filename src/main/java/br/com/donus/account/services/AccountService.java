@@ -13,6 +13,7 @@ import br.com.donus.account.data.repositories.AccountRepository;
 import br.com.donus.account.data.repositories.TransactionRepository;
 import br.com.donus.account.exception.*;
 import br.com.donus.account.utils.DocumentValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class AccountService {
 
     private static final TimeZone SAO_PAULO_TIME_ZONE = TimeZone.getTimeZone("America/Sao_Paulo");
@@ -46,6 +48,8 @@ public class AccountService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public AccountResponse createAccount(CreateAccountRequest request) {
+
+        log.info("Received request for account creation: " + request);
 
         String formatted = formatDocument(request.getTaxId());
         if (!documentValidator.isValidCPF(formatted)) {
@@ -81,6 +85,9 @@ public class AccountService {
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public AccountResponse findByTaxId(String taxid) {
+
+        log.info("Finding account by tax id: " + taxid);
+
         String formatted = formatDocument(taxid);
         return accountMapper.sourceToTarget(accountRepository.findAccountByTaxId(formatted)
                 .orElseThrow(() -> new AccountNotFoundException(taxid)), SAO_PAULO_TIME_ZONE);
@@ -88,12 +95,18 @@ public class AccountService {
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public AccountResponse findAccountById(UUID id) {
+
+        log.info("Finding account by id: " + id);
+
         return accountMapper.sourceToTarget(accountRepository.findAccountById(id)
                 .orElseThrow(() -> new AccountNotFoundException(id)), SAO_PAULO_TIME_ZONE);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public PageResponse<AccountResponse> listAll(Pageable pageable) {
+
+        log.info("Listing all account: " + pageable);
+
         Page<Account> accountPage = accountRepository.findAll(pageable);
 
         return pageMapper.sourceToTarget(accountPage.map(account -> accountMapper.sourceToListTarget(account, SAO_PAULO_TIME_ZONE)));
@@ -101,6 +114,8 @@ public class AccountService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void deposit(UUID id, BigDecimal value) {
+
+        log.info(String.format("Deposit %s to account %s", value, id));
 
         if (value.compareTo(BigDecimal.ZERO)<0) {
             throw new NegativeValueException(value);
@@ -118,6 +133,8 @@ public class AccountService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void withdraw(UUID id, BigDecimal value) {
+
+        log.info(String.format("Withdraw %s from account %s", value, id));
 
         if (value.compareTo(BigDecimal.ZERO)<0) {
             throw new NegativeValueException(value);
@@ -140,6 +157,8 @@ public class AccountService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public void transfer(UUID id, UUID target, BigDecimal value) {
+
+        log.info(String.format("Transfer %s from account %s to account %S", value, id, target));
 
         if (value.compareTo(BigDecimal.ZERO)<0) {
             throw new NegativeValueException(value);
@@ -164,10 +183,14 @@ public class AccountService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     private void registerTransaction(UUID accountId, TransactionType type, BigDecimal value) {
+
         Transaction tr = new Transaction();
         tr.setAccountId(accountId);
         tr.setTransactionType(type);
         tr.setAmount(value);
+
+        log.info("Saving transaction to database: " + tr);
+
         this.transactionRepository.save(tr);
     }
 

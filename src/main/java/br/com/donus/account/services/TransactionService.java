@@ -4,6 +4,7 @@ import br.com.donus.account.data.dto.transaction.TransactionResponse;
 import br.com.donus.account.data.entities.Transaction;
 import br.com.donus.account.data.mappers.TransactionMapper;
 import br.com.donus.account.data.repositories.TransactionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
@@ -30,6 +32,8 @@ public class TransactionService {
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public List<TransactionResponse> findTransactionsByPeriod(UUID accountId, LocalDate startDate, LocalDate endDate) {
+
+        log.info(String.format("List all transactions for the account %s on the period %s - %s", accountId, startDate, endDate));
 
         Pair<LocalDateTime, LocalDateTime> timeFrame;
         if (startDate == null || endDate == null) {
